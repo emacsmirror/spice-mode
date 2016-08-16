@@ -35,101 +35,91 @@
 ;;            ) auto-mode-alist))
 ;;
 
+;;; Todos:
+;;
+;; No bug report notification is currently available. No indentation is
+;; implemented; this mode provides a fontification hook. Common language
+;; commands and key bindings are linked through this command. Do not use a -*-
+;; Mode -*- line in a spice deck as the first card in the deck is defined to be
+;; the title card. Rather, autoload spice-mode through your .emacs file. turning
+;; on Spice mode calls the value of the variable `spice-mode-hook' with no args,
+;; if that value is non-nil.
+
 ;;; Code:
 
-(defvar spice-mode-syntax-table nil
+(defvar spice-mode-syntax-table (make-syntax-table)
   "Syntax table used in spice-mode buffers.")
 
 (if spice-mode-syntax-table
-    ()
-  (setq spice-mode-syntax-table (make-syntax-table))
-  (modify-syntax-entry ?* "<" spice-mode-syntax-table)
-  (modify-syntax-entry ?$ "<" spice-mode-syntax-table)
-  (modify-syntax-entry ?\n ">" spice-mode-syntax-table))
+    (progn
+      (modify-syntax-entry ?* "<" spice-mode-syntax-table)
+      (modify-syntax-entry ?$ "<" spice-mode-syntax-table)
+      (modify-syntax-entry ?\n ">" spice-mode-syntax-table)))
 
 (defvar spice-mode-abbrev-table nil
   "Abbrev table in use in spice-mode buffers.")
 
 (define-abbrev-table 'spice-mode-abbrev-table ())
 
-(defvar spice-mode-map ()
+(defvar spice-mode-map (make-sparse-keymap)
   "Keymap used in spice-mode.")
 
+;; TODO: where does the `install-common-language-commands' from?
 (if spice-mode-map
-    ()
-  (setq spice-mode-map (make-sparse-keymap))
-  ;; (install-common-language-commands spice-mode-map)
-  )
+    ;; (install-common-language-commands spice-mode-map)
+    )
 
 ;; ======================================================================
 ;; spice-mode main entry point
 ;; ======================================================================
 ;;;###autoload
-(defun spice-mode ()
-  "Major mode for editing spice decks.
-No bug report notification is currently available.  No indentation is
-implemented; this mode provides a fontification hook.  Common language
-commands and key bindings are linked through this command.  Do not use
-a -*- Mode -*- line in a spice deck as the first card in the deck is
-defined to be the title card.  Rather, autoload spice-mode through
-your .emacs file.  turning on Spice mode calls the value of the
-variable `spice-mode-hook' with no args, if that value is non-nil."
-  (interactive)
-  (kill-all-local-variables)
-  (use-local-map spice-mode-map)
-  (set-syntax-table spice-mode-syntax-table)
-  (setq major-mode 'spice-mode
-        mode-name "Spice"
-        local-abbrev-table spice-mode-abbrev-table)
-  (set (make-local-variable 'paragraph-start) (concat "^$\\|" page-delimiter))
-  (set (make-local-variable 'paragraph-separate) paragraph-start)
-  (set (make-local-variable 'paragraph-ignore-fill-prefix) t)
-  (set (make-local-variable 'require-final-newline) t)
-  (set (make-local-variable 'parse-sexp-ignore-comments) nil)
-  (set (make-local-variable 'comment-start) "* ")
-  (set (make-local-variable 'comment-end) "")
-  (set (make-local-variable 'comment-column) 32)
-  (run-hooks 'spice-mode-hook)
+(define-derived-mode spice-mode prog-mode "spice-mode"
+  "Major mode for editing spice decks."
+  (setq-local paragraph-start (concat "^$\\|" page-delimiter))
+  (setq-local paragraph-separate paragraph-start)
+  (setq-local paragraph-ignore-fill-prefix t)
+  (setq-local require-final-newline t)
+  (setq-local parse-sexp-ignore-comments nil)
+  (setq-local comment-start "* ")
+  (setq-local comment-end "")
+  (setq-local comment-column 32)
   )
-
 
 
 ;;; Hacks to implement the find function menu bar for spice mode subcircuits.
 ;;; Fortunately spice only provides one means of abstraction so the parsing is
 ;;; very easy.
-(defconst fume-function-name-regexp-spice
+(defconst spice-mode-function-name-regexp-spice
   "^[\.]\\(subckt\\)[ \t]+\\([A-Za-z0-9_+-]*\\)[ \t]*"
   "Expression to parse Spice subcircuit names.")
 
-(defun fume-find-next-spice-function-name (buffer)
+(defun spice-mode-find-next-spice-function-name (buffer)
   "Search for the next spice subcircuit name in BUFFER."
   (set-buffer buffer)
-  (if (re-search-forward fume-function-name-regexp-spice nil t)
+  (if (re-search-forward spice-mode-function-name-regexp-spice nil t)
       (let ((beg (match-beginning 2))
             (end (match-end 2)))
         (cons (buffer-substring beg end) beg))))
 
 ;; hook in the spice mode regular expression above into the association list of
 ;; regexps used by the function menu generator
-(defvar fume-function-name-regexp-alist nil)
-(setq fume-function-name-regexp-alist
-      (purecopy
-       (append
-        fume-function-name-regexp-alist
-        (list
-         '(spice-mode . fume-function-name-regexp-spice)))))
-
+(defvar spice-mode-function-name-regexp-alist
+  (purecopy
+   (append
+    spice-mode-function-name-regexp-alist
+    (list
+     '(spice-mode . spice-mode-function-name-regexp-spice)))))
 
 ;; hook in the search method above into the association list used by the
 ;; function menu generating code
-(defvar fume-find-function-name-method-alist nil)
-(setq fume-find-function-name-method-alist
-      (purecopy
-       (append
-        fume-find-function-name-method-alist
-        (list '(spice-mode . fume-find-next-spice-function-name)))))
+(defvar spice-mode-find-function-name-method-alist
+  (purecopy
+   (append
+    spice-mode-find-function-name-method-alist
+    (list '(spice-mode . spice-mode-find-next-spice-function-name)))))
 
-(autoload 'spice-mode "spice-mode" "Spice  Editing Mode" t)
+
+;;;###autoload
 (setq auto-mode-alist
       (append '(("\\.sp$"  . spice-mode)) auto-mode-alist))
 
