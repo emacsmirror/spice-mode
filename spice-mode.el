@@ -104,19 +104,12 @@
 ;; hook in the spice mode regular expression above into the association list of
 ;; regexps used by the function menu generator
 (defvar spice-mode-function-name-regexp-alist
-  (purecopy
-   (append
-    spice-mode-function-name-regexp-alist
-    (list
-     '(spice-mode . spice-mode-function-name-regexp-spice)))))
+  (list '(spice-mode . spice-mode-function-name-regexp-spice)))
 
 ;; hook in the search method above into the association list used by the
 ;; function menu generating code
 (defvar spice-mode-find-function-name-method-alist
-  (purecopy
-   (append
-    spice-mode-find-function-name-method-alist
-    (list '(spice-mode . spice-mode-find-next-spice-function-name)))))
+  (list '(spice-mode . spice-mode-find-next-spice-function-name)))
 
 
 ;;;###autoload
