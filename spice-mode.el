@@ -1,9 +1,9 @@
-;;; spice-mode.el --- major mode providing a spice mode hook for fontification
-;;;* Last edited: Feb 23 12:55 1995 (cvieri)
+;;; spice-mode.el --- Major mode for SPICE
 
 ;; Author: 1994 Carlin J. Vieri, MIT AI Lab <cvieri@ai.mit.edu>
 ;; Keywords: Spice editing major-mode
 ;; Version: 0.0.1
+;; Package-Requires: ((emacs "24.3"))
 
 ;; Copyright (C) 1994, MIT Artificial Intelligence Lab
 
@@ -50,24 +50,10 @@
 (defvar spice-mode-syntax-table (make-syntax-table)
   "Syntax table used in spice-mode buffers.")
 
-(if spice-mode-syntax-table
-    (progn
-      (modify-syntax-entry ?* "<" spice-mode-syntax-table)
-      (modify-syntax-entry ?$ "<" spice-mode-syntax-table)
-      (modify-syntax-entry ?\n ">" spice-mode-syntax-table)))
+(modify-syntax-entry ?* "<" spice-mode-syntax-table)
+(modify-syntax-entry ?$ "<" spice-mode-syntax-table)
+(modify-syntax-entry ?\n ">" spice-mode-syntax-table)
 
-(defvar spice-mode-abbrev-table nil
-  "Abbrev table in use in spice-mode buffers.")
-
-(define-abbrev-table 'spice-mode-abbrev-table ())
-
-(defvar spice-mode-map (make-sparse-keymap)
-  "Keymap used in spice-mode.")
-
-;; TODO: where does the `install-common-language-commands' from?
-(if spice-mode-map
-    ;; (install-common-language-commands spice-mode-map)
-    )
 
 ;; ======================================================================
 ;; spice-mode main entry point
@@ -114,10 +100,9 @@
 
 ;;;###autoload
 (setq auto-mode-alist
-      (append '(("\\.sp$"  . spice-mode)) auto-mode-alist))
+      (append '(("\\.sp\\'"  . spice-mode)) auto-mode-alist))
 
 
-;; this is sometimes useful
 (provide 'spice-mode)
 
 ;;; spice-mode.el ends here
