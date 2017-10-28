@@ -480,23 +480,22 @@ see also `spice-waveform-viewer'."
   :group 'spice)
 
 ;;;###autoload
-(custom-declare-variable 'spice-hide-line-prefix
-			 '(concat
-			   (regexp-quote
-			    (concat comment-start
-				    (if (boundp 'comment-padding)
-					(if (integerp comment-padding)
-					    (make-string comment-padding ? )
-					  comment-padding)
-				      " ")))
-				   "[a-z\\*!$0-9+\\.]")
+(defcustom spice-hide-line-prefix
+  '(eval-after-load "newcomment"
+     '(concat
+	     (regexp-quote
+		    (concat comment-start
+				        (if (boundp 'comment-padding)
+					          (if (integerp comment-padding)
+					              (make-string comment-padding ? )
+					            comment-padding)
+				          " ")))
+	     "[a-z\\*!$0-9+\\.]"))
   "*Regexp string describing lines that are commented out and will be
 hidden. The regexp is matched to the beginning of a line, the ^ is
 added automatically. The initialization of this variable is handled
 in `spice-hide-init', which is after the setting of `comment-start'
 and `comment-padding' variables."
-  :initialize (lambda (variable value)
-		(message "Deferring initialization of %s with %s to spice-hide-init" variable value)) ; avoid init now, comment-start and padding aren't set yet.
   :group 'spice-hide
   :type 'string)
 
