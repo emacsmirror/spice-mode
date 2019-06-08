@@ -1583,17 +1583,13 @@ This does highlighting of keywords and standard identifiers.")
     (setq min (point))
     (goto-char (point-max))
     (setq max (point))
-    (save-excursion
-      (set-buffer (get-buffer-create "*Matcher*"))
+    (with-current-buffer (get-buffer-create "*Matcher*")
       (goto-char (point-max))
       (insert (format "Point min is %s\n" min))
       (insert (format "Current point is %s\n" pt))
       (insert (format "Limit is %s\n" limit))
-      (insert (format "Point max is %s\n" max))
-      )
-    )
-  nil
-  )
+      (insert (format "Point max is %s\n" max))))
+  nil)
 
 (defun spice-idle-font-lock (beg end)
   "runs font-lock on a region"
@@ -7045,14 +7041,14 @@ the errors in the simulation buffer with compile.el")
 
 
 (defun spice-linenum (f c)
-                                        ;(message (format "calling linenum fun '%s'" f))
-  (save-excursion
-    (set-buffer compilation-last-buffer)
-                                        ;(message (format "buffer '%s'" (buffer-name)))
+  ;;(message (format "calling linenum fun '%s'" f))
+  (with-current-buffer compilation-last-buffer
+    ;;(message (format "buffer '%s'" (buffer-name)))
     )
-  (list (point-marker) f 1 (if (= spice-column 1)
-                               (setq spice-column 2)
-                             (setq spice-column 1))))
+  (list (point-marker) f 1
+        (if (= spice-column 1)
+            (setq spice-column 2)
+          (setq spice-column 1))))
 
 
 (defun spice-next-error (n)
@@ -7211,19 +7207,19 @@ is t, the filename itself is returned unmodified."
 (defun spice-run-silent (name command file)
   "Start process with (optional) second argument."
   (let ((dir (spice-master-directory)))
-    (set-buffer (get-buffer-create "*spice silent*"))
-    (erase-buffer)
-    (if dir (cd dir))
+    (with-current-buffer (get-buffer-create "*spice silent*")
+      (erase-buffer)
+      (if dir (cd dir))
                                         ;    (message "cd to %s" dir)
-    (let ((process (start-process (concat name " silent")
-                                  (current-buffer)  ; can be nil
-                                  spice-shell
-                                  spice-shell-command-option
-                                  command)))
-      (message "started %s" command)
-      (if spice-after-start-process-function
-          (funcall spice-after-start-process-function process))
-      (process-kill-without-query process))))
+      (let ((process (start-process (concat name " silent")
+                                    (current-buffer)  ; can be nil
+                                    spice-shell
+                                    spice-shell-command-option
+                                    command)))
+        (message "started %s" command)
+        (if spice-after-start-process-function
+            (funcall spice-after-start-process-function process))
+        (process-kill-without-query process)))))
 
 (defun spice-run-interactive (name command file)
   "Run waveform viewer interactively.
@@ -7260,8 +7256,7 @@ interaction."
 
 (defun spice-command-mode-line (process)
   "Format the mode line for a buffer containing output from PROCESS."
-  (setq mode-line-process (concat ": "
-                                  (symbol-name (process-status process))))
+  (setq mode-line-process (concat ": " (symbol-name (process-status process))))
   (set-buffer-modified-p (buffer-modified-p)))
 
 (defun spice-process-check (name)
@@ -7425,8 +7420,7 @@ subcircuit searches.")
 (defun spice-search-file-for-subckt (filename subckt)
   "Searches a file for a .subckt definition. Remembers
 `spice-subckt-search-master-filename' for future subckt searches."
-  (save-excursion
-    (set-buffer (find-file-noselect filename))
+  (with-current-buffer (find-file-noselect filename)
     (condition-case nil
         (let ((index-alist (imenu--make-index-alist t))
               (mrk nil))
@@ -7542,9 +7536,8 @@ only guaranteed to work when all included files are not already loaded."
                             (lambda (buffer)
                               (cons (buffer-file-name buffer) buffer))
                             (buffer-list)))))
-              (save-excursion
+              (with-current-buffer (find-file-noselect filename)
                 ;; (message "filename is %s" filename)
-                (set-buffer (find-file-noselect filename))
                 ;; (spice-mode) ? ref. discussion Manu
                 (unless (or non-recursive
                             (not (eq major-mode 'spice-mode)))
@@ -7664,7 +7657,7 @@ only one *. If you want to unhide all the hidden comment lines, use
           )
         (setq end (point))
         (spice-hide-region beg end t))))
-  (set-spice-name)
+  (spice-set-spice-name)
   )
 
 (defun spice-unhide-all-comments ()
@@ -7673,7 +7666,7 @@ only one *. If you want to unhide all the hidden comment lines, use
   (setq spice-some-comment-regions-are-hidden nil)
   (setq spice-last-hide-comment-regions-tick nil)
   (spice-hide-region (point-min) (point-max) nil)
-  (set-spice-name)) ;; update mode-line
+  (spice-set-spice-name)) ;; update mode-line
 
 (defun spice-hide-region (from to flag)
   "Hides or shows lines from FROM to TO, according to FLAG.  If FLAG
@@ -8028,11 +8021,11 @@ returns it. Non-comment paragraphs can also be filled correctly."
   (sit-for 0)
   (message "spice-mode version %s, © %s" spice-version spice-developer))
 
-(defun set-spice-name ()
+(defun spice-set-spice-name ()
   "Set mode line name of spice mode"
   (setq mode-name "Spice"))
 
-;; (defun set-spice-name ()
+;; (defun spice-set-spice-name ()
 ;;   "Set mode line name of spice mode"
 ;;   (setq mode-name
 ;; 	(concat
@@ -8115,7 +8108,7 @@ returns it. Non-comment paragraphs can also be filled correctly."
   (if (spice-output-p)
       (use-local-map spice-output-mode-map)
     (use-local-map spice-mode-map))
-  (set-spice-name)
+  (spice-set-spice-name)
   (spice-update-mode-menu)
   (set-syntax-table spice-mode-syntax-table)
   (if (not (spice-output-p))
@@ -8144,7 +8137,7 @@ variables of the customization buffer."
       (use-local-map spice-output-mode-map)
     (use-local-map spice-mode-map))
   ;; (setq spice-standard-local spice-standard)
-  (set-spice-name)
+  (spice-set-spice-name)
   (spice-menu-init)
   (spice-update-mode-menu)
   (spice-mode-syntax-table-init)
@@ -8377,7 +8370,7 @@ Key bindings for other parts in the file:
   (set (make-local-variable 'spice-output-local) (spice-check-output-mode))
 
   ;; set mode name
-  (set-spice-name)
+  (spice-set-spice-name)
 
   ;; build global syntax table
   (unless spice-mode-syntax-table
