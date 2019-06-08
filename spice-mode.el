@@ -6360,7 +6360,7 @@ Returns t if found, nil otherwise, uses cache generated with the
       ["Fill Paragraph (Break Line)" fill-paragraph (not buffer-read-only)]
       ["Join line"                  spice-delete-indentation (not buffer-read-only)]
       "--"
-      ["Fontify..."                 font-lock-fontify-buffer t]
+      ["Fontify..."                 font-lock-flush t]
       "--"
       ["(Re)activate File links..." spice-colorize-libraries-buffer t]
       ["Load include/lib files..."  spice-load-include-files (assoc spice-imenu-libraries-submenu-name imenu--index-alist)]
@@ -6676,7 +6676,7 @@ Returns t if found, nil otherwise, uses cache generated with the
    (list
     "Spice-output"
     '("Edit"
-      ["Fontify..."                 font-lock-fontify-buffer t]
+      ["Fontify..."                 font-lock-flush t]
       "--"
       ["Unload all other spice files" spice-unload-other-decks t]
       "--"
@@ -8132,7 +8132,7 @@ returns it. Non-comment paragraphs can also be filled correctly."
   (if (fboundp 'font-lock-unset-defaults)
       (font-lock-unset-defaults))
   (font-lock-set-defaults)
-  (font-lock-fontify-buffer)
+  (font-lock-flush)
   )
 
 
@@ -8169,7 +8169,7 @@ customization buffer."
   ;;  (setq font-lock-defaults
   ;;	(list 'spice-font-lock-keywords nil t (list (cons ?\" "w"))))
   (font-lock-set-defaults)
-  (font-lock-fontify-buffer))
+  (font-lock-flush))
 
 
 ;; ======================================================================
