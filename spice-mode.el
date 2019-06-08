@@ -6177,20 +6177,19 @@ uses cache generated with the `spice-cache-section-p' function."
  'spice-tempo-tags)
 
 (defmacro spice-layla-function-template (name type)
-  "Create a layla tempo define for name and type"
-  (` (let (p_prompt)
-       (setq p_prompt (concat "[Name of " (, name) "]: "))
-       (tempo-define-template
-        (concat "layla-" (, name) "-" (, type))
-        (list (concat "." (, name) "_" (, type) "_param(")
-              (list 'p p_prompt) ", "
-              '(p "[Name of parameter]: ") ", "
-              '(p "[Value of parameter]: ") ")"
-              'n)
-        (concat "layla-" (, name) "-" (, type))
-        (concat "template for inserting a " (, type) " parameter for a Layla "
-                (, name))
-        'spice-tempo-tags))))
+  "Create a layla tempo define for NAME and TYPE."
+  `(let (p_prompt)
+     (setq p_prompt (concat "[Name of " ,name "]: "))
+     (tempo-define-template
+      (concat "layla-" ,name "-" ,type)
+      (list (concat "." ,name "_" ,type "_param(")
+            (list 'p p_prompt) ", "
+            '(p "[Name of parameter]: ") ", "
+            '(p "[Value of parameter]: ") ")"
+            'n)
+      (concat "layla-" ,name "-" ,type)
+      (concat "template for inserting a " ,type " parameter for a Layla " ,name)
+      'spice-tempo-tags)))
 
 (spice-layla-function-template "bus" "double")
 (spice-layla-function-template "bus" "integer")
