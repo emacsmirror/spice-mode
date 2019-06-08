@@ -464,16 +464,16 @@ waveform viewer command."
 
 ;;;###autoload
 (defcustom spice-hide-line-prefix
-  '(eval-after-load "newcomment"
-     '(concat
-	     (regexp-quote
-		    (concat comment-start
-				        (if (boundp 'comment-padding)
-					          (if (integerp comment-padding)
-					              (make-string comment-padding ? )
-					            comment-padding)
-				          " ")))
-	     "[a-z\\*!$0-9+\\.]"))
+  (if (featurep 'newcomment)
+      '(concat
+        (regexp-quote
+         (concat comment-start
+                 (if (boundp 'comment-padding)
+                     (if (integerp comment-padding)
+                         (make-string comment-padding ? )
+                       comment-padding)
+                   " ")))
+        "[a-z\\*!$0-9+\\.]"))
   "Regexp string describing lines that are commented out and will be hidden.
 
 The regexp is matched to the beginning of a line, the ^ is added
@@ -2130,17 +2130,8 @@ have the same support for this as XEmacs has."
         (while (search-forward-regexp spice-library-regexp-start end-point t)
           (let (start-lib extent)
             (setq start-lib (point))
-            (search-forward-regexp spice-library-regexp-end end-point)
-                                        ; (let ((end-lib (point)))
-            (or (extent-at (point) (buffer-name) 'mouse-face) ;; not yet extended
-                (progn
-                  (setq extent (make-extent start-lib (point)))
-                  (set-extent-property extent 'start-closed 't)
-                  (set-extent-property extent 'end-closed 't)
-                  (set-extent-property extent 'detachable 't)
-                  (set-extent-property extent 'spice-library 't)
-                  (set-extent-property extent 'mouse-face 'highlight)
-                  (set-extent-keymap extent spice-mode-mouse-map)))))))))
+            (search-forward-regexp spice-library-regexp-end end-point) ; (let ((end-lib (point)))
+            ))))))
 
 
 (defun spice-colorize-libraries-buffer ()
