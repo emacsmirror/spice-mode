@@ -109,8 +109,8 @@
 ;; extensively. These changes have been heavily influenced by the eldo-mode.el
 ;; of Emmanuel Rouat (the tempo-templates for one) and the vhdl-mode.el of
 ;; Reto Zimmermann and Rodney J. Whitby (the font-locking, the
-;; customization, the menus, ...) Help in understanding 'advanced' lisp
-;; was provided by G. Debyser <geert.debyser@advalvas.be>, our (common) lisp
+;; customization, the menus, ...) Help in understanding 'advanced' Lisp
+;; was provided by G. Debyser <geert.debyser@advalvas.be>, our (Common) Lisp
 ;; expert. Since version 0.97 a lot of input/ideas have been provided by
 ;; Emmanuel Rouat. Just take a look and search for eldo-mode ;)
 
@@ -144,6 +144,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; Code:
 (defconst spice-version "1.2.25 (03 Jan 2007)"
   "Current version of spice mode (spice2g6/spice3/hspice/eldo(rf&verilog-a)/fasthenry/layla/mondriaan/draccdl/spectre).")
 
@@ -157,8 +158,7 @@
 
 ;; help function
 (defun spice-custom-set (variable value &rest functions)
-  "Set variables as in `custom-set-default' and call FUNCTIONS (if
-bound) afterwards."
+  "Set VARIABLE as VALUE in `custom-set-default' and call FUNCTIONS (if bound) afterwards."
   (if (fboundp 'custom-set-default)
       (custom-set-default variable value)
     (set-default variable value))
@@ -183,8 +183,9 @@ bound) afterwards."
 
 
 ;;;###autoload
-(defcustom spice-standard '(spice2g6 (hspice eldo eldorf eldovloga fasthenry)) ; "layla" has been removed
-  "*Spice standards used.
+(defcustom spice-standard '(spice2g6 (hspice eldo eldorf eldovloga fasthenry))
+  "Spice standards used.
+
 Basic standard:
   Spice2g6    : Original Berkeley Spice (leave this always on!)
 Additional standards:
@@ -196,8 +197,7 @@ Additional standards:
   Layla       : KULeuven LAYLA (layout synthesis) extensions to Spice format
   Mondriaan   : KULeuven MONDRIAAN (layout synthesis) extensions (also turn on Layla!)
   DracCDL (TM): Dracula CDL extensions (Cadence LOGLVS netlists)
-  Spectre (TM): Spice compatibility of Spectre language (simulator language=spice decks)
-"
+  Spectre (TM): Spice compatibility of Spectre language (simulator language=spice decks)."
   :type '(list (choice :tag "Basic standard"
                        (const :tag "Spice2g6" spice2g6))
                (set :tag "Additional standards" :indent 2
@@ -223,7 +223,7 @@ Additional standards:
 
 ;;;###autoload
 (defcustom spice-imenu-add-to-menubar t
-  "*Spice mode adds imenu (Index) item to menubar"
+  "Spice mode adds imenu (Index) item to menubar."
   :group 'spice
   :set (lambda (variable value)
          (spice-custom-set variable value
@@ -232,13 +232,13 @@ Additional standards:
 
 ;;;###autoload
 (defcustom spice-show-describe-mode nil ; was t
-  "*Spice mode runs `describe-mode' once at start of spice-mode"
+  "Spice mode runs `describe-mode' once at start of spice-mode."
   :group 'spice
   :type 'boolean)
 
 ;;;###autoload
 (defcustom spice-echo-intro t
-  "*Spice mode echos introductory message on entry to spice-mode"
+  "Spice mode echos introductory message on entry to spice-mode."
   :group 'spice
   :type 'boolean)
 
@@ -248,30 +248,33 @@ Additional standards:
 
 ;;;###autoload
 (defcustom spice-initialize-empty-file nil
-  "*Spice initialize empty/new file setting"
+  "Spice initialize empty/new file setting."
   :group 'spice-initialize-file
   :type  'boolean)
 
 ;;;###autoload
 (defcustom spice-initialize-template-file "~/.spice-default"
-  "*File containing the default header that is inserted when opening
-an empty file (ie. a new file), see also `spice-initialize-empty-file'"
+  "File containing the default header in new empty file.
+See also `spice-initialize-empty-file'."
   :group 'spice-initialize-file
   :type  'file)
 
 ;;;###autoload
 (defcustom spice-default-header nil
-  "*Default header for new Spice netlists, see also `spice-initialize-empty-file'"
+  "Default header for new Spice netlists, see also `spice-initialize-empty-file'."
   :group 'spice-initialize-file
   :type  'string)
 
 ;;;###autoload
 (defcustom spice-initialize-file-function 'spice-initialize-empty-file
-  "*Optional initialize function for empty/new files, see also
-`spice-initialize-empty-file'. If a different function is specified it
-should insert a default header/template in the current buffer. This
-function should check which submode is in use with `spice-standard-p'
-and adapt its output accordingly. It may also use the `spice-default-header'
+  "Optional initialize function for empty/new files,
+
+See also `spice-initialize-empty-file'.
+
+If a different function is specified it should insert a default
+header/template in the current buffer. This function should check
+which submode is in use with `spice-standard-p' and adapt its
+output accordingly. It may also use the `spice-default-header'
 variable and insert its contents into the buffer."
   :group 'spice-initialize-file
   :type  'function)
@@ -334,8 +337,7 @@ simulate command.
 
 Most simulators do not include the file name in the error message, but print
 out a file name message in advance.  In this case, set \"File Subexp Index\"
-to 0 and fill out the \"File Message\" entries.
-"
+to 0 and fill out the \"File Message\" entries."
   :type '(repeat (list :tag "Simulator" :indent 2
                        (string :tag "Simulator Name    ")
                        (string :tag "Simulate Command  ")
@@ -358,16 +360,14 @@ to 0 and fill out the \"File Message\" entries.
 
 ;;;###autoload
 (defcustom spice-simulator nil ; example: "Hspice"
-  "*Spice command, used when compiling buffer with `compile-mode',
-see also `spice-simulator-switches'."
+  "Spice command, used when compiling buffer with `compile-mode', see also `spice-simulator-switches'."
   :group 'spice-simulate
   :type  'string)
 
 
 ;;;###autoload
 (defcustom spice-simulator-switches "" ; example "-noconf"
-  "*Spice command switches, used when compiling buffer with `compile-mode',
-see also `spice-simulator'."
+  "Spice command switches, used when compiling buffer with `compile-mode', see also `spice-simulator'."
   :group 'spice-simulate
   :type  'string)
 
@@ -395,8 +395,7 @@ Waveform Viewer:
   Extra switches   : extra switches for waveform viewer, after filename
 
 See also variable `spice-waveform-viewer-switches' to add options to the
-waveform viewer command.
-"
+waveform viewer command."
   :type '(repeat (list :tag "Waveform Viewer" :indent 2
                        (string :tag "Waveform Viewer Name     ")
                        (string :tag "Waveform Viewing Command ")
@@ -418,16 +417,14 @@ waveform viewer command.
 
 ;;;###autoload
 (defcustom spice-waveform-viewer nil ; example: "Nutmeg"
-  "*Spice command, used when starting waveform viewer,
-see also `spice-waveform-viewer-switches'."
+  "Spice command, used when starting waveform viewer, see also `spice-waveform-viewer-switches'."
   :group 'spice-simulate
   :type  'string)
 
 
 ;;;###autoload
 (defcustom spice-waveform-viewer-switches "" ; example "-b"
-  "*Spice waveform viewer command switches,
-see also `spice-waveform-viewer'."
+  "Spice waveform viewer command switches, see also `spice-waveform-viewer'."
   :group 'spice-simulate
   :type  'string)
 
@@ -477,10 +474,11 @@ see also `spice-waveform-viewer'."
 					            comment-padding)
 				          " ")))
 	     "[a-z\\*!$0-9+\\.]"))
-  "*Regexp string describing lines that are commented out and will be
-hidden. The regexp is matched to the beginning of a line, the ^ is
-added automatically. The initialization of this variable is handled
-in `spice-hide-init', which is after the setting of `comment-start'
+  "Regexp string describing lines that are commented out and will be hidden.
+
+The regexp is matched to the beginning of a line, the ^ is added
+automatically. The initialization of this variable is handled in
+`spice-hide-init', which is after the setting of `comment-start'
 and `comment-padding' variables."
   :group 'spice-hide
   :type 'string)
@@ -603,10 +601,10 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     (hspice       (concat (file-name-sans-extension (buffer-file-name)) ".hspout")) ;
     (spice2g6     (concat (file-name-sans-extension (buffer-file-name)) ".out")) ;
     )
-  "*List of valid output names depending on selected spice standard:
+  "List of valid output names depending on selected spice standard.
+
   Spice Standard   : one of spice2g6, hspice, eldo or layla
-  Expression       : expression calculating the output filename
-"
+  Expression       : expression calculating the output filename."
   :type '(repeat (list :tag "Output Filenames" :indent 2
                        (symbol :tag "Spice Standard      ")
                        (sexp   :tag "Expression          ")))
@@ -620,7 +618,7 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
 ;;  "buffer local version of spice-standard.")
 
 (defvar spice-output-local nil
-  "buffer local version of spice-output.")
+  "Buffer local version of spice-output.")
 
 (defun spice-standard-p (standard)
   "Check if STANDARD is specified as used standard on local variable."
@@ -632,24 +630,24 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
 ;; regexps for spice mode
 
 (defconst spice-continuation-prefix "+"
-  "Continuation prefix for normal spice line")
+  "Continuation prefix for normal spice line.")
 
 (defconst spice-line-break "\\(\n\\s-*\\+\\s-*\\)*"
-  "Regexp that matches a (possible) line break (\n+)")
+  "Regexp that matches a (possible) line break (\n+).")
 
 (defconst spice-model-name "\\([a-z][^ \t\n=]*\\)" ; "\\([a-z]\\sw*[^ \t\n=]*\\)"
-  "Regexp that describes a syntactically correct model or subckt name")
+  "Regexp that describes a syntactically correct model or subckt name.")
 
 (defconst spice-library-regexp-start
   "^\\.\\(inc\\|include\\|verilog\\|use_veriloga\\|lib\\(\\s-+key=\\w+\\)?\\|libfas\\|subckt\\s-+lib\\|model\\s-+lib\\)\\s-+[\"']?"
-  "Regexp that matches the beginning of library or include filename")
+  "Regexp that matches the beginning of library or include filename.")
 
 (defconst spice-library-regexp-end
   "\\([^ \t\n\"']*\\)"
-  "Regexp that matches the end of library or include filename") ; doesn't catch end of buffer
+  "Regexp that matches the end of library or include filename.") ; doesn't catch end of buffer
 
 (defconst spice-section-regexp-start "\\(^[*!$]\\s-*\\)"
-  "spice mode section header start regexp.")
+  "Spice mode section header start regexp.")
 
 (defconst spice-spice2g6-keywords
   '(
@@ -660,13 +658,13 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "model" "macro" "include" ; include is actually a spice3 keyword, not 2g6
     "ends" "end"
     )
-  "List of Spice2g6 keywords")
+  "List of Spice2g6 keywords.")
 
 (defconst spice-spice2g6-analyses
   '(
     "tran" "op" "noise" "four" "disto" "dc" "ac"
     )
-  "List of Spice2g6 analysis keywords")
+  "List of Spice2g6 analysis keywords.")
 
 (defconst spice-spice2g6-analysis-modifiers
   '(
@@ -674,7 +672,7 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "pol" "zer" "pz" "cur" "vol" ;; pz analysis spice3
     "ac" ;; .sens analysis spice3
     )
-  "List of Spice2g6 analysis modifier keywords")
+  "List of Spice2g6 analysis modifier keywords.")
 
 (defconst spice-eldo-keywords
   '(
@@ -691,13 +689,13 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "defwave" "defplotdig" "defmac" "data" "d2a" "comchar" "conso" "connect"
     "chrsim" "chrent" "chrand" "checksoa" "checkbus" "alter" "addlib" "a2d"
     )
-  "List of Eldo keywords")
+  "List of Eldo keywords.")
 
 (defconst spice-eldo-colon-keywords
   '(
     "param" "pin" "model"
     )
-  "List of Eldo colon keywords")
+  "List of Eldo colon keywords.")
 
 (defconst spice-eldo-macromodel-keywords
   '(
@@ -714,7 +712,7 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "sc_ideal" "sc_i" "sc_n" "sc_p" "sc_s1" "sc_s2"
     "sc_sp1" "sc_sp2" "sc_b" "sc_u"
     )
-  "List of Eldo macromodels")
+  "List of Eldo macromodels.")
 
 (defconst spice-eldo-analyses
   '(
@@ -722,36 +720,36 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "step" "snf" "sens" "pz"
     "noisetran" "mc"
     )
-  "List of Eldo analysis keywords")
+  "List of Eldo analysis keywords.")
 
 (defconst spice-eldo-analysis-modifiers
   '(
     )
-  "List of Eldo analysis modifier keywords")
+  "List of Eldo analysis modifier keywords.")
 
 (defconst spice-eldorf-keywords
   '(
     "sst"
     )
-  "List of Eldo RF keywords")
+  "List of Eldo RF keywords.")
 
 (defconst spice-eldovloga-keywords
   '(
     "verilog" "use_veriloga"
     )
-  "List of Eldo Verilog-A keywords")
+  "List of Eldo Verilog-A keywords.")
 
 (defconst spice-eldovloga-colon-keywords
   '(
     "port" "generic"
     )
-  "List of Eldo Verilog-A colon keywords")
+  "List of Eldo Verilog-A colon keywords.")
 
 (defconst spice-eldorf-analyses
   '(
     "sstac" "sstxf" "sstnoise"
     )
-  "List of Eldo RF keywords")
+  "List of Eldo RF keywords.")
 
 (defconst spice-hspice-keywords
   '(
@@ -768,7 +766,7 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "alter"
     "fsoptions" "layerstack" "material" "shape" ; FEM solver for W elements
     )
-  "List of Hspice keywords")
+  "List of Hspice keywords.")
 
 (defconst spice-hspice-analyses
   '(
@@ -781,30 +779,30 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "pz"
     "noise"
     )
-  "List of Hspice analysis keywords")
+  "List of Hspice analysis keywords.")
 
 (defconst spice-hspice-analysis-modifiers
   '(
     "sweep" "poi"
     )
-  "List of Hspice analysis modifier keywords")
+  "List of Hspice analysis modifier keywords.")
 
 (defconst spice-fasthenry-keywords
   '(
     "units" "default" "external" "equiv"
     )
-  "List of FastHenry keywords")
+  "List of FastHenry keywords.")
 
 (defconst spice-fasthenry-analyses
   '(
     "freq"
     )
-  "List of FastHenry analysis keywords")
+  "List of FastHenry analysis keywords.")
 
 (defconst spice-fasthenry-analysis-modifiers
   '(
     )
-  "List of FastHenry analysis modifier keywords")
+  "List of FastHenry analysis modifier keywords.")
 
 (defconst spice-layla-keywords
   '(
@@ -816,13 +814,13 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "include" "inc"
     "bus"
     )
-  "List of Layla keywords")
+  "List of Layla keywords.")
 
 (defconst spice-mondriaan-keywords
   '(
     "master" "routingarea" "routingchannel" "ports" "portgrid" "net"
     )
-  "List of Mondriaan keywords")
+  "List of Mondriaan keywords.")
 
 (defconst spice-draccdl-keywords
   '(
@@ -832,44 +830,44 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "resi" "ressize" "resval" "reverse" "scale" "spice" "unspec"
     "eom" "global" "param" "macro" "swap"
     )
-  "List of Dracula CDL keywords")
+  "List of Dracula CDL keywords.")
 
 (defconst spice-spice2g6-types
   '(
     "ac" "dc" "exp" "pulse" "pwl" "sffm" "sin"
     )
-  "List of types in spice2g6")
+  "List of types in spice2g6.")
 
 (defconst spice-hspice-types
   '(
     "metal" "dielectric" "pec" "rectangle" "circle" "strip" "polygon" ;; ""
     )
-  "List of types in hspice")
+  "List of types in hspice.")
 
 (defconst spice-eldo-types
   '(
     "pattern"
     )
-  "List of source types in eldo")
+  "List of source types in eldo.")
 
 (defconst spice-eldorf-types
   '(
     "fpulse" "four" "probe"
     )
-  "List of source types in eldorf")
+  "List of source types in eldorf.")
 
 (defconst spice-fasthenry-types
   '(
     "point" "rect" "circle"
     "user1" "user2" "user3" "user4" "user5" "user6" "user7"
     )
-  "List of source types in fasthenry")
+  "List of source types in fasthenry.")
 
 (defconst spice-special-model-type-names
   '(
     "d" "npn" "pnp" "nmos" "pmos"
     )
-  "List of model type names which are excluded for imenu")
+  "List of model type names which are excluded for imenu.")
 
 (defconst spice-spice2g6-model-type-names
   '(
@@ -878,54 +876,54 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "nmf" "pmf"
     "sw" "csw"
     )
-  "List of model type names in spice2g6")
+  "List of model type names in spice2g6.")
 
 (defconst spice-eldo-model-type-names
   '(
     "res" "cap" "ind"
     "rn" "rp" "lpnp"
     )
-  "List of model type names extra in eldo")
+  "List of model type names extra in eldo.")
 
 (defconst spice-eldo-vloga-model-type-names
   '(
     "macro"
     )
-  "List of model type names extra in Eldo Verilog-A")
+  "List of model type names extra in Eldo Verilog-A.")
 
 (defconst spice-hspice-model-type-names
   '(
     "l" "core" "w" "plot"
     )
-  "List of model type names extra in hspice")
+  "List of model type names extra in hspice.")
 
 (defconst spice-spice2g6-output-keywords
   '("print" "plot")
-  "List of output keywords in spice2g6")
+  "List of output keywords in spice2g6.")
 
 (defconst spice-spice2g6-output-types
   '("ac" "dc" "tran")
-  "List of output types in spice2g6")
+  "List of output types in spice2g6.")
 
 (defconst spice-eldo-output-keywords
   '("extract" "meas")
-  "List of output keywords in eldo")
+  "List of output keywords in eldo.")
 
 (defconst spice-eldo-output-types
   '("dcac" "dcsweep" "dctran" "noise" "four" "sweep")
-  "List of output types in eldo")
+  "List of output types in eldo.")
 
 (defconst spice-eldorf-output-types
   '("fsst" "tsst" "sstac" "sstxf" "ssnoise" )
-  "List of output types in eldo")
+  "List of output types in eldo.")
 
 (defconst spice-hspice-output-keywords
   '("probe" "graph" "measure")
-  "List of output keywords in hspice")
+  "List of output keywords in hspice.")
 
 (defconst spice-hspice-output-types
   '("noise" "disto")
-  "List of output types in hspice")
+  "List of output types in hspice.")
 
 (defconst spice-spice2g6-options-keywords
   '("trytocompact")
@@ -1060,7 +1058,7 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
     "port_double_param" "port_integer_param" "port_string_param"
     "symmetry_double_param" "symmetry_integer_param" "symmetry_string_param"
     )
-  "List of functions in Layla mode")
+  "List of functions in Layla mode.")
 
 (defconst spice-draccdl-device-keywords
   '("nonswap" )
@@ -1075,38 +1073,38 @@ NOTE: Activate the new setting in a spice buffer by re-fontifying it (menu
   '(
     "ends" "macro" "subckt"
     )
-  "List of spice2g6 entity start keywords")
+  "List of spice2g6 entity start keywords.")
 
 (defconst spice-eldo-entity-start-keywords
   '(
     "endl"
     )
-  "List of eldo entity start keywords")
+  "List of eldo entity start keywords.")
 
 (defconst spice-hspice-entity-start-keywords
   '(
     "endl" "eom"
     "fsoptions" "layerstack" "material" "shape" ; FEM solver for W elements
     )
-  "List of hspice entity start keywords")
+  "List of hspice entity start keywords.")
 
 (defconst spice-layla-entity-start-keywords
   '(
     "bus" "net" "symmetry" "performance" "port"
     )
-  "List of layla entity start keywords")
+  "List of layla entity start keywords.")
 
 (defconst spice-mondriaan-entity-start-keywords
   '(
     "routingarea" "routingchannel" ;; "net" ; already in layla
     )
-  "List of mondriaan entity start keywords")
+  "List of mondriaan entity start keywords.")
 
 (defconst spice-draccdl-entity-start-keywords
   '(
     "eom"
     )
-  "List of DracCDL entity start keywords")
+  "List of DracCDL entity start keywords.")
 
 (defvar spice-keywords nil
   "List of spice mode keywords.")
@@ -1534,7 +1532,7 @@ This does highlighting of keywords and standard identifiers.")
 
 ;; fast variable name matcher in parameter=value constructs
 (defun spice-match-variable-name (limit)
-  "match variable names"
+  "Match variable names with LIMIT."
   (let (pos found (start (point)))
     (setq found nil)
     (setq pos (search-forward "=" limit 'end)) ;
@@ -1554,7 +1552,8 @@ This does highlighting of keywords and standard identifiers.")
 
 ;; font-lock aux functions
 (defun spice-match-eldo-colon-keywords (limit)
-  "match ((param|pin|model|port|generic):)" ;; latter two are eldo verilog-A
+  "Match with LIMIT ((param|pin|model|port|generic):)."
+  ;; latter two are eldo verilog-A
   (let (pos found (start (point)))
     (setq found nil)
     (setq pos (search-forward ":" limit 'end)) ;
@@ -1576,7 +1575,7 @@ This does highlighting of keywords and standard identifiers.")
 ;; these are try outs to solve the font-locking of problematic xinstances:
 
 (defun spice-match-xinstances-dummy (limit)
-  "match xinstances"
+  "Match xinstances with LIMIT."
   (let (min max pt)
     (setq pt (point))
     (goto-char (point-min))
@@ -1592,7 +1591,7 @@ This does highlighting of keywords and standard identifiers.")
   nil)
 
 (defun spice-idle-font-lock (beg end)
-  "runs font-lock on a region"
+  "Run font-lock on a region between BEG and END."
   (message "rerunning font-lock on %s:%s=%s" beg end (buffer-substring beg end))
   (save-excursion (font-lock-fontify-region beg end)))
 
@@ -1600,7 +1599,7 @@ This does highlighting of keywords and standard identifiers.")
 (make-variable-buffer-local 'spice-previous-xinstance-match-result)
 
 (defun spice-match-in-xinstance (limit)
-  "checks if in xinstance"
+  "Check if in xinstance with LIMIT."
   (let ((pt (point)))
     (if (or (looking-at "^\\s-*[xX]")
             (re-search-backward "^[xX]" (point-min) t))
@@ -1629,7 +1628,7 @@ This does highlighting of keywords and standard identifiers.")
     ))
 
 (defun spice-match-next-xinstance (limit)
-  "checks if there is a next xinstance partly within limit"
+  "Check if there is a next xinstance partly within LIMIT."
   (if (re-search-forward "^[xX]" limit 'end)
       (progn
         (backward-char 1)
@@ -1645,22 +1644,24 @@ This does highlighting of keywords and standard identifiers.")
     nil))
 
 (defun spice-match-xinstance (limit)
-  "match xinstances"
+  "Match xinstances with LIMIT."
   (if (spice-match-in-xinstance limit)
       t
     (spice-match-next-xinstance limit)))
 
 (defun spice-match-xinstances-old (limit)
-  "match an xinstance"
+  "Match an xinstance with LIMIT."
   (setq spice-previous-xinstance-match-result (spice-match-xinstance limit))
   spice-previous-xinstance-match-result)
 
 ;; this xinstances matcher is a complete parser !
 
 (defun spice-match-xinstances (limit)
-  "match xinstance subckt name, this one parses the lines, should work for
-all cases, infinite number of comment lines, continuation lines. Could fail
-when modifying an xinstance line though, hard to tell."
+  "Match xinstance with LIMIT subckt name, this one parses the lines.
+
+Should work for all cases, infinite number of comment lines,
+continuation lines. Could fail when modifying an xinstance line
+though, hard to tell."
   (interactive)
   (let ((result nil) match-start)
     (while
@@ -1692,7 +1693,8 @@ when modifying an xinstance line though, hard to tell."
   "Regular expressions to highlight in spice mode.")
 
 (defun spice-font-lock-init ()
-  "Initialize fontification." ; makes spice-font-lock-keywords valid
+  "Initialize fontification."
+  ;; makes spice-font-lock-keywords valid
   ;; highlight title & titles after .alter & .title (hspice only)
   (setq spice-font-lock-keywords-0
         (append (list ;; first line of spice deck
@@ -1998,7 +2000,7 @@ when modifying an xinstance line though, hard to tell."
 
 ;; uncomment function, should work for any case now:
 (defun spice-uncomment-region (beg end)
-  "Uncomment selected region - comment symbol is '*'
+  "Uncomment selected region - comment symbol is '*'.
 Doc comments (starting with '!') are unaffected."
   (interactive "*r")
   (comment-region beg end '(2))) ; 2 is arbitrary, can be any value
@@ -2100,20 +2102,14 @@ Doc comments (starting with '!') are unaffected."
 ;; xemacs 21.1 (Windows) and xemacs 21.5 (Linux). You need
 ;; fsf-compat package for xemacs 21.4.5 (Linux). Anyone still following this ?
 
-;; create set-extent-keymap procedure when it does not exist
-(eval-and-compile
-  (unless (fboundp 'set-extent-keymap)
-    (defun set-extent-keymap (extent keymap)
-      "fallback version of set-extent-keymap (for emacs 2[01])"
-      (set-extent-property extent 'local-map keymap))))
-
 
 (defun spice-colorize-libraries (beg end old-len)
-  "This function colorises libraries and included files when the mouse
-passes over them. Clicking on the middle-mouse button loads them in a buffer.
-BEWARE, this feature was hard to implement, and contains (non-fatal) bugs,
-primarily because emacs 20 does not have the same support for this as xemacs
-has."
+  "Colorize libraries and included files when the mouse passes over them.
+
+Clicking on the middle-mouse button loads them in a buffer.
+BEWARE, this feature was hard to implement, and
+contains (non-fatal) bugs, primarily because Emacs 20 does not
+have the same support for this as XEmacs has."
   (save-excursion
     (save-match-data
       (let (end-point)
@@ -2148,6 +2144,7 @@ has."
 
 
 (defun spice-colorize-libraries-buffer ()
+  "Colorize spice libraries in buffer."
   (interactive)
   ;; (message "running colorize libraries buffer")
   ;; delete overlays
@@ -2164,7 +2161,7 @@ has."
 
 ;; ffap needs wrapper to detect end of buffer condition
 (defun spice-load-file-at-point ()
-  "wrapper for ffap. But if at end of buffer inserts a newline instead"
+  "Wrapper for ffap. But if at end of buffer inserts a newline instead."
   (interactive)
   (if (looking-at "\\'")
       (newline) ;; assumes \r is bound to load file...
@@ -2175,7 +2172,7 @@ has."
 ;; so define this function to do more or less the same (primarily
 ;; wraps ffap-at-mouse, except for xemacs 20)...
 (defun spice-load-file-at-mouse (event)
-  "loads file under button 2 click. Checks if file is readable."
+  "Loads file under button 2 click EVENT. Checks if file is readable."
   (interactive "@e")
   (if (fboundp 'ffap-at-mouse)
       (ffap-at-mouse event)  ;; use ffap-at-mouse if available
@@ -2197,7 +2194,7 @@ has."
 ;;------------------------------------------------------------
 
 (defun spice-doc-char ()
-  "Return doc char that's valid in the selected spice submode"
+  "Return doc char that's valid in the selected spice submode."
   (cond
    ((and (spice-standard-p 'eldo)
          (spice-standard-p 'hspice))
@@ -2211,8 +2208,8 @@ has."
 
 
 (defun spice-find-changelog-point ()
-  "Find adequate position to place Changelog entries: just before .end
-or if not found at end of buffer."
+  "Find adequate position to place Changelog entries.
+Just before .end or if not found at end of buffer."
   (save-excursion
     (goto-char (point-min))
     (let ((pos (re-search-forward
@@ -2246,8 +2243,7 @@ or if not found at end of buffer."
 
 
 (defun spice-goto-section (section)
-  "Move point to the beginning of the specified section; If the
-section is not found, leave point at previous location."
+  "Move point to the beginning of the specified section; If the section is not found, leave point at previous location."
   (interactive "ssection: ")
   (let ((pos (point)))
     (goto-char (point-min))
@@ -2261,8 +2257,9 @@ section is not found, leave point at previous location."
 
 
 (defun spice-comment-bar (&optional aligned)
-  "Insert solid comment bar from column zero to end of line. If optional
-argument is provided, bar will be added from current column."
+  "Insert solid comment bar from column zero to end of line.
+If optional argument is provided, bar will be added from current
+column."
   (interactive)
   (if (not aligned) (beginning-of-line) )
   (insert "*")
@@ -2271,7 +2268,7 @@ argument is provided, bar will be added from current column."
 
 
 (defun spice-add-section (section &optional arg)
-  "Add a section in buffer at (optional) point arg"
+  "Add a SECTION in buffer at (optional) point ARG."
   (interactive "ssection: ")
   (if arg
       (goto-char arg))
@@ -2292,7 +2289,7 @@ argument is provided, bar will be added from current column."
 (defvar spice-cache-section-alist nil)
 
 (defun spice-cache-section-p (section)
-  "checks for all sections in file and remembers if they were present or not"
+  "Check for all sections in file and remembers if they were present or not."
   (save-excursion
     (setq spice-cache-section-alist nil)
     (goto-char (point-min))
@@ -2304,8 +2301,10 @@ argument is provided, bar will be added from current column."
 
 
 (defun spice-section-p (section)
-  "checks if named section is in file, returns t if found, nil otherwise,
-uses cache generated with the `spice-cache-section-p' function."
+  "Check if named section is in file.
+
+Returns t if found, nil otherwise, uses cache generated with the
+`spice-cache-section-p' function."
   (assoc section spice-cache-section-alist))
 
 
@@ -6731,14 +6730,13 @@ uses cache generated with the `spice-cache-section-p' function."
 (require 'easymenu)
 
 (defun spice-menu-init ()
-  "Initializes global vars for Spice menu's"
+  "Initialize global vars for Spice menu's."
   (setq spice-menu-list (spice-create-mode-menu))
   (setq spice-output-menu-list (spice-create-output-mode-menu))
   )
 
 (defun spice-update-mode-menu ()
-  "Updates Spice mode menu for current buffer." ; assumes globals have
-                                        ; been updated
+  "Update Spice mode menu for current buffer. assumes globals have been updated."
   (interactive)
   (if (spice-output-p)
       (easy-menu-define spice-output-menu spice-output-mode-map
@@ -6754,7 +6752,7 @@ uses cache generated with the `spice-cache-section-p' function."
   "Syntax table used in spice-mode buffers.")
 
 (defun spice-mode-syntax-table-init ()
-  "initialize syntax table from scratch."
+  "Initialize syntax table from scratch."
   (setq spice-mode-syntax-table (make-syntax-table))
   (modify-syntax-entry ?$  "w"  spice-mode-syntax-table)
   (modify-syntax-entry ?!  "w"  spice-mode-syntax-table)
@@ -6826,13 +6824,13 @@ uses cache generated with the `spice-cache-section-p' function."
   "Imenu generic expression for spice mode. See `imenu-generic-expression'.")
 
 (defconst spice-imenu-end-submenu-name "*End*"
-  "label of End submenu in imenu")
+  "Label of End submenu in imenu.")
 
 (defconst spice-imenu-libraries-submenu-name "*Libraries*"
-  "label of Libraries submenu in imenu")
+  "Label of Libraries submenu in imenu.")
 
 (defun spice-imenu-init ()
-  "initialize imenu generic expression and pass to imenu"
+  "Initialize imenu generic expression and pass to imenu."
   (setq spice-imenu-generic-expression
         (append
          (list
@@ -6915,12 +6913,12 @@ uses cache generated with the `spice-cache-section-p' function."
 ;; ======================================================================
 
 (defun spice-simulation-buffer-name-function (arg)
-  "Derives unique spice simulation buffer for simulator output"
+  "Derive unique spice simulation buffer for simulator output."
   (concat "*Spice-simulation-" (buffer-name) "*"))
 
 
 (defun spice-get-simulator ()
-  "Make an educated guess on what simulator a user likely wants to use"
+  "Make an educated guess on what simulator a user likely wants to use."
   (if (and spice-simulator
            (assoc spice-simulator spice-simulator-alist))
       spice-simulator ;; is specified by user, take his choice
@@ -6930,6 +6928,7 @@ uses cache generated with the `spice-cache-section-p' function."
 
 
 (defun spice-set-simulator-command ()
+  "Construct a spice simulator command."
   (interactive)
   (setq compile-command
         (let ((commands-alist spice-simulator-alist)
@@ -6952,6 +6951,7 @@ uses cache generated with the `spice-cache-section-p' function."
           command)))
 
 (defun spice-set-simulator (name)
+  "Set spice simulator NAME."
   (setq spice-simulator name)
   (spice-set-simulator-command))
 
@@ -6961,14 +6961,14 @@ uses cache generated with the `spice-cache-section-p' function."
 (defvar spice-compilation-file-regexp-alist nil)
 
 (defun spice-compile ()
-  "spice wrapper function for compile."
+  "Spice wrapper function for compile."
   (interactive)
   (spice-set-simulator-command)
   (call-interactively 'compile nil)
   )
 
 (defun spice-compile-variables-init ()
-  "build variable lists."
+  "Build variable lists."
   (setq spice-compilation-error-regexp-alist
         (let ((commands-alist spice-simulator-alist)
               regexp-alist sublist)
@@ -7026,20 +7026,24 @@ uses cache generated with the `spice-cache-section-p' function."
 
 
 (defvar spice-column 1
-  "global variable to do column hack. Why ? Compile.el requires that
-every error is 'special', ie. different from the previous one. This is
-either the file is different, the line number is different or the column
-number is different. Prob: the file is always the same, the simulator
-guys never output the file name of the file that is being read, so that
-one doesn't change; the line number can not be found either; the column
-number is same problem; Solution: always take line number one, then take
-the column number 1 or 2 alternatingly, remember previous value here !
+  "Global variable to do column hack.
+
+Why ? Compile.el requires that every error is 'special', ie.
+different from the previous one. This is either the file is
+different, the line number is different or the column number is
+different. Prob: the file is always the same, the simulator guys
+never output the file name of the file that is being read, so
+that one doesn't change; the line number can not be found either;
+the column number is same problem; Solution: always take line
+number one, then take the column number 1 or 2 alternatingly,
+remember previous value here !
 
 This is ugly, I know, but it's the only way I could think of to find
 the errors in the simulation buffer with compile.el")
 
 
 (defun spice-linenum (f c)
+  "Dirty hack function for `spice-column' global varible."
   ;;(message (format "calling linenum fun '%s'" f))
   (with-current-buffer compilation-last-buffer
     ;;(message (format "buffer '%s'" (buffer-name)))
@@ -7051,7 +7055,7 @@ the errors in the simulation buffer with compile.el")
 
 
 (defun spice-next-error (n)
-  "Move point to the next error in the compilation buffer.
+  "Move point to the next error N in the compilation buffer.
 Does NOT find the source line like \\[next-error] does, is defined
 in spice-mode since many simulators don't output errors with source line
 numbers included, so finding the error is still difficult."
@@ -7066,7 +7070,7 @@ numbers included, so finding the error is still difficult."
 
 
 (defun spice-previous-error (n)
-  "Move point to the previous error in the compilation buffer.
+  "Move point to the previous error N in the compilation buffer.
 Does NOT find the source line like \\[next-error] does, is defined
 in spice-mode since many simulators don't output errors with source line
 numbers included, so finding the error is still difficult."
@@ -7086,7 +7090,7 @@ numbers included, so finding the error is still difficult."
 ;; This is work in progress; (user) interface might change
 
 (defun spice-waveform-buffer-name-function (arg)
-  "check running process"
+  "Check running process."
   (let ((name (if arg arg (buffer-name))))
     (concat "*Spice-waveform-" name "*")))
 
@@ -7096,7 +7100,7 @@ numbers included, so finding the error is still difficult."
   (spice-set-waveform-viewer-command))
 
 (defun spice-get-waveform-viewer ()
-  "Make an educated guess on what waveform viewer a user likely would want"
+  "Make an educated guess on what waveform viewer a user likely would want."
   (if (and spice-waveform-viewer
            (assoc spice-waveform-viewer spice-waveform-viewer-alist))
       spice-waveform-viewer ;; is specified by user, take his choice
@@ -7106,11 +7110,13 @@ numbers included, so finding the error is still difficult."
 
 
 (defun spice-waveform-viewer-derive-filename (arg)
-  "Derive from the buffer file name the name of a derived file. If ARG is
-a string, it is a suffix to replace the buffer's suffix, if ARG is a list
-, , if ARG is a function, the function is called without arguments and it
-should return the derived filename, if ARG is nil, nil is returned, if ARG
-is t, the filename itself is returned unmodified."
+  "Derive from the buffer file name the name of a derived file.
+
+If ARG is a string, it is a suffix to replace the buffer's
+suffix, if ARG is a list , , if ARG is a function, the function
+is called without arguments and it should return the derived
+filename, if ARG is nil, nil is returned, if ARG is t, the
+filename itself is returned unmodified."
   (cond ((stringp arg)
          (concat (file-name-sans-extension buffer-file-name) arg))
         ((listp arg)
@@ -7134,21 +7140,22 @@ is t, the filename itself is returned unmodified."
   )
 
 (defvar spice-waveform-viewer-command ""
-  "variable containing buffer local waveform viewer command")
+  "Variable containing buffer local waveform viewer command.")
 
 (defvar spice-waveform-viewer-filename nil
-  "variable filename field of waveform viewer structure")
+  "Variable filename field of waveform viewer structure.")
 
 (defvar spice-waveform-viewer-alist-entry nil
-  "variable holding selected entry of waveform viewer")
+  "Variable holding selected entry of waveform viewer.")
 
 (defvar spice-waveform-viewer-read-command t
-  "variable containing boolean indicating reading of buffer local waveform viewer command")
+  "Variable containing boolean indicating reading of buffer local waveform viewer command.")
 
 (defvar spice-after-start-process-function nil
-  "variable containing after start process function")
+  "Variable containing after start process function.")
 
 (defun spice-set-waveform-viewer-command ()
+  "Set waveform viewer command for spice."
   (interactive)
   (setq spice-waveform-viewer-alist-entry nil)
   (let ((commands-alist spice-waveform-viewer-alist))
@@ -7176,7 +7183,7 @@ is t, the filename itself is returned unmodified."
 
 
 (defun spice-run-waveform-viewer ()
-  "run the waveform viewer if it is not yet running."
+  "Run the waveform viewer if it is not yet running."
   (interactive)
   (if (not buffer-file-name)
       (message "Can not run waveform viewer on unsaved file-less buffers.")
@@ -7204,7 +7211,7 @@ is t, the filename itself is returned unmodified."
 
 
 (defun spice-run-silent (name command file)
-  "Start process with (optional) second argument."
+  "Start process NAME with (optional) second argument COMMAND and FILE."
   (let ((dir (spice-master-directory)))
     (with-current-buffer (get-buffer-create "*spice silent*")
       (erase-buffer)
@@ -7218,10 +7225,10 @@ is t, the filename itself is returned unmodified."
         (message "started %s" command)
         (if spice-after-start-process-function
             (funcall spice-after-start-process-function process))
-        (process-kill-without-query process)))))
+        (set-process-query-on-exit-flag process)))))
 
 (defun spice-run-interactive (name command file)
-  "Run waveform viewer interactively.
+  "Run waveform viewer interactively with process (NAME COMMAND FILE).
 Run command in a buffer (in comint-shell-mode) so that it accepts user
 interaction."
   (require 'comint)
@@ -7280,7 +7287,7 @@ command."
 ;; ---- setting commands ?
 
 (defun spice-set-command ()
-  "Sets both simulator an waveform viewer commands for current buffer."
+  "Set both simulator an waveform viewer commands for current buffer."
   (interactive)
   (spice-set-simulator-command)
   (spice-set-waveform-viewer-command)
@@ -7413,22 +7420,19 @@ that has been selected."
 
 
 (defvar spice-subckt-search-master-filename nil
-  "latest top-level (identified by .end in file) .cir file used in
-subcircuit searches.")
+  "Latest top level (identified by .end in file) .cir file used in subcircuit searches.")
 
 (defun spice-search-file-for-subckt (filename subckt)
-  "Searches a file for a .subckt definition. Remembers
-`spice-subckt-search-master-filename' for future subckt searches."
+  "Searche a FILENAME for a SUBCKT definition.
+Remembers `spice-subckt-search-master-filename' for future subckt searches."
   (with-current-buffer (find-file-noselect filename)
     (condition-case nil
         (let ((index-alist (imenu--make-index-alist t))
               (mrk nil))
           (if (assoc spice-imenu-end-submenu-name index-alist)
               (setq spice-subckt-search-master-filename buffer-file-name))
-          (setq mrk (assoc-ignore-case subckt index-alist))
-          (if mrk mrk
-            (spice-search-included-files subckt))
-          )
+          (setq mrk (assoc-string subckt index-alist))
+          (if mrk mrk (spice-search-included-files subckt)))
       (error nil))))
 
 
@@ -7437,7 +7441,7 @@ subcircuit searches.")
   "History of subcircuit searches.")
 
 (defun spice-guess-subckt-name ()
-  "guesses name of subckt from context, multiple lines"
+  "Guess name of subckt from context, multiple lines."
   (let ((subckt "")) ; (current-word)
     (save-excursion
       (beginning-of-line)
@@ -7452,28 +7456,31 @@ subcircuit searches.")
     subckt))
 
 
-(defun spice-visit-subckt-def (mrk)
-  "Helper function visiting buffer and mark specified."
-  (when (and (eq (marker-buffer (cdr mrk))
+(defun spice-visit-subckt-def (mark)
+  "Helper function visiting buffer and MARK specified."
+  (when (and (eq (marker-buffer (cdr mark))
                  (current-buffer))
              (not (and transient-mark-mode mark-active)))
     (push-mark))
-  (pop-to-buffer (marker-buffer (cdr mrk)) t)
+  (pop-to-buffer (marker-buffer (cdr mark)) t)
   (widen)
-  (goto-char (cdr mrk)))
+  (goto-char (cdr mark)))
 
 
 (defun spice-search-subckt (subckt-args)
-  "Searches for the .subckt definition with name under cursor, or any other
-name specified by user. Be CAREFUL using this command. Depending on the
-structure of your spice decks this might find wrong definitions. To AVOID any
-such problems always start searching from the TOP-LEVEL spice deck (ie. the
-file that is supplied to the simulator). If you start searching from an
-included file, potentially the definition is not found or it is found starting
-from ANOTHER top-level file (which could result in a completely wrong
-search result).
-This search command places the mark if search result is in the same file,
-return to the search start position by using C-u C-<SPC> or C-u C-@."
+  "Searches for the .subckt definition with name under cursor, or any other name specified by user.
+
+Be CAREFUL using this command. Depending on the structure of your
+spice decks this might find wrong definitions. To AVOID any such
+problems always start searching from the TOP-LEVEL spice
+deck (ie. the file that is supplied to the simulator). If you
+start searching from an included file, potentially the definition
+is not found or it is found starting from ANOTHER top level
+file (which could result in a completely wrong search result).
+
+This search command places the mark if search result is in the
+same file, return to the search start position by using C-u
+C-<SPC> or C-u C-@."
   (interactive
    (list (let* ((default-subckt (spice-guess-subckt-name))
                 (input (read-from-minibuffer
@@ -7516,10 +7523,12 @@ return to the search start position by using C-u C-<SPC> or C-u C-@."
 ;; loading of include files of current deck.
 
 (defun spice-load-include-files (&optional non-recursive)
-  "Loads all files that are included in this deck. Makes it more easy
-to load a project. This loading occurs recursively. Files already
-loaded are not reloaded or scanned for .includes. This function is
-only guaranteed to work when all included files are not already loaded."
+  "Loads all files that are included in this deck.
+
+Makes it more easy to load a project. This loading occurs
+recursively. Files already loaded are not reloaded or scanned for
+.includes. This function is only guaranteed to work when all
+included files are not already loaded."
   (interactive)
   (let ((index-alist (imenu--make-index-alist t))
         l filename)
@@ -7548,8 +7557,9 @@ only guaranteed to work when all included files are not already loaded."
 ;; unloading of spice files except current deck.
 
 (defun spice-unload-other-decks ()
-  "Kills all other spice files except current one. Makes it easy to
-unload a lot of spice files without restarting emacs."
+  "Kills all other spice files except current one.
+
+Makes it easy to unload a lot of spice files without restarting Emacs."
   (interactive)
   (save-excursion
     (let ((current (current-buffer)))
@@ -8103,7 +8113,7 @@ returns it. Non-comment paragraphs can also be filled correctly."
 
 
 (defun spice-activate-customizations-local ()
-  "Activates customization (of global variables) in current buffer"
+  "Activates customization (of global variables) in current buffer."
   (if (spice-output-p)
       (use-local-map spice-output-mode-map)
     (use-local-map spice-mode-map))
@@ -8127,10 +8137,12 @@ returns it. Non-comment paragraphs can also be filled correctly."
 
 
 (defun spice-activate-customizations-obsolete ()
-  "Activate all customizations on local variables. Run this if you set
-the spice-standard variable to modify spice-mode's behaviour in the local
-buffer. It sets up the buffer local variables using the modified global
-variables of the customization buffer."
+  "Activate all customizations on local variables.
+
+Run this if you set the spice-standard variable to modify
+spice-mode's behaviour in the local buffer. It sets up the buffer
+local variables using the modified global variables of the
+customization buffer."
   (interactive)
   (if (spice-output-p)
       (use-local-map spice-output-mode-map)
