@@ -11,6 +11,7 @@
 ;; Maintainer: Geert A. M. Van der Plas <geert_vanderplas@email.com>
 ;; Last-Updated: 01 November 2004
 ;; Description: spice file editing
+;; Homepage: https://repo.or.cz/spice-mode.git
 ;; URL: http://spice-mode.4t.com/
 ;; old-URL: http://www.esat.kuleuven.ac.be/~vdplas/emacs/
 
